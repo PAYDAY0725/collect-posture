@@ -3,7 +3,7 @@ from depthai_sdk.managers import PipelineManager, PreviewManager, NNetManager, B
 import depthai as dai
 import cv2
 
-class sam:
+class elden:
     pm = PipelineManager()
     pm.createColorCam(previewSize=(1920, 1080), xout=True)
 
@@ -15,22 +15,23 @@ class sam:
 
     pm.addNn(nn)
 
-    with dai.Device(pm.pipeline) as device:
-        pv = PreviewManager(display=[Previews.color.name])
-        pv.createQueues(device)
-        nm.createQueues(device)
-        nnData = []
+    def ring():
+        with dai.Device(elden.pm.pipeline) as device:
+            pv = PreviewManager(display=[Previews.color.name])
+            pv.createQueues(device)
+            elden.nm.createQueues(device)
+            nnData = []
 
 
-        while True:
-            pv.prepareFrames()
-            inNn = nm.outputQueue.tryGet()
+            while True:
+                pv.prepareFrames()
+                inNn = elden.nm.outputQueue.tryGet()
 
-            if inNn is not None:
-                nnData = nm.decode(inNn)
+                if inNn is not None:
+                    nnData = elden.nm.decode(inNn)
 
-            nm.draw(pv, nnData)
-            pv.showFrames()
+                elden.nm.draw(pv, nnData)
+                pv.showFrames()
 
-            if cv2.waitKey(1) == ord('q'):
-                break
+                if cv2.waitKey(1) == ord('q'):
+                    break
