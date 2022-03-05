@@ -3,34 +3,34 @@ from depthai_sdk.managers import PipelineManager, PreviewManager, NNetManager, B
 import depthai as dai
 import cv2
 
-
-pm = PipelineManager()
-pm.createColorCam(previewSize=(1920, 1080), xout=True)
-
-
-bm = BlobManager(zooName="mobilenet-ssd")
-nm = NNetManager(inputSize=(300, 300), nnFamily="mobilenet")
-nn = nm.createNN(pipeline=pm.pipeline, nodes=pm.nodes, source=Previews.color.name,
-                 blobPath=bm.getBlob(shaves=6, openvinoVersion=pm.pipeline.getOpenVINOVersion()))
-
-pm.addNn(nn)
-
-with dai.Device(pm.pipeline) as device:
-    pv = PreviewManager(display=[Previews.color.name])
-    pv.createQueues(device)
-    nm.createQueues(device)
-    nnData = []
+class sam:
+    pm = PipelineManager()
+    pm.createColorCam(previewSize=(1920, 1080), xout=True)
 
 
-    while True:
-        pv.prepareFrames()
-        inNn = nm.outputQueue.tryGet()
+    bm = BlobManager(zooName="mobilenet-ssd")
+    nm = NNetManager(inputSize=(300, 300), nnFamily="mobilenet")
+    nn = nm.createNN(pipeline=pm.pipeline, nodes=pm.nodes, source=Previews.color.name,
+                    blobPath=bm.getBlob(shaves=6, openvinoVersion=pm.pipeline.getOpenVINOVersion()))
 
-        if inNn is not None:
-            nnData = nm.decode(inNn)
+    pm.addNn(nn)
 
-        nm.draw(pv, nnData)
-        pv.showFrames()
+    with dai.Device(pm.pipeline) as device:
+        pv = PreviewManager(display=[Previews.color.name])
+        pv.createQueues(device)
+        nm.createQueues(device)
+        nnData = []
 
-        if cv2.waitKey(1) == ord('q'):
-            break
+
+        while True:
+            pv.prepareFrames()
+            inNn = nm.outputQueue.tryGet()
+
+            if inNn is not None:
+                nnData = nm.decode(inNn)
+
+            nm.draw(pv, nnData)
+            pv.showFrames()
+
+            if cv2.waitKey(1) == ord('q'):
+                break
