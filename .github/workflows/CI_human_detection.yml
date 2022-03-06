@@ -20,4 +20,4 @@ jobs:
           pip install pytest
 
       - name: build
-        run: pytest /main.py
+        run: pytest main.py
