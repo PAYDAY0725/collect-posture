@@ -63,7 +63,7 @@ class elden:
 
            
 
-            for detection in elden.detections:
+            for detection in detections:
                 # Denormalize bounding box
                 x1 = int(detection.xmin * width)
                 x2 = int(detection.xmax * width)
