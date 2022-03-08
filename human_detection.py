@@ -20,7 +20,7 @@ class elden:
     monoLeft = pipeline.create(dai.node.MonoCamera)
     monoRight = pipeline.create(dai.node.MonoCamera)
     stereo = pipeline.create(dai.node.StereoDepth)
-    
+
     xoutRgb = pipeline.create(dai.node.XLinkOut)
     xoutNN = pipeline.create(dai.node.XLinkOut)
     xoutBoundingBoxDepthMapping = pipeline.create(dai.node.XLinkOut)
@@ -31,6 +31,16 @@ class elden:
     xoutBoundingBoxDepthMapping.setStreamName("boundingBoxDepthMapping")
     xoutDepth.setStreamName("depth")
 
+    previewQueue = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
+    inPreview = previewQueue.get()
+    frame = inPreview.getCvFrame()
+
+    detectionNNQueue = device.getOutputQueue(name="detections", maxSize=4, blocking=False)
+    inDet = detectionNNQueue.get()
+    detections = inDet.detections
+
+    height = frame.shape[0]
+    width  = frame.shape[1]
 
     bm = BlobManager(zooName="mobilenet-ssd")
     nm = NNetManager(inputSize=(300, 300), nnFamily="mobilenet")
@@ -46,16 +56,7 @@ class elden:
             elden.nm.createQueues(device)
             nnData = []
 
-            previewQueue = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
-            inPreview = previewQueue.get()
-            frame = inPreview.getCvFrame()
-
-            detectionNNQueue = device.getOutputQueue(name="detections", maxSize=4, blocking=False)
-            inDet = detectionNNQueue.get()
-            detections = inDet.detections
-
-            height = frame.shape[0]
-            width  = frame.shape[1]
+           
 
             for detection in detections:
                 # Denormalize bounding box
@@ -67,11 +68,11 @@ class elden:
                     label = elden.labelMap[detection.label]
                 except:
                     label = detection.label
-                cv2.putText(frame, str(label), (x1 + 10, y1 + 20), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
-                cv2.putText(frame, "{:.2f}".format(detection.confidence*100), (x1 + 10, y1 + 35), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
-                cv2.putText(frame, f"X: {int(detection.spatialCoordinates.x)} mm", (x1 + 10, y1 + 50), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
-                cv2.putText(frame, f"Y: {int(detection.spatialCoordinates.y)} mm", (x1 + 10, y1 + 65), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
-                cv2.putText(frame, f"Z: {int(detection.spatialCoordinates.z)} mm", (x1 + 10, y1 + 80), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
+                cv2.putText(elden.frame, str(label), (x1 + 10, y1 + 20), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
+                cv2.putText(elden.frame, "{:.2f}".format(detection.confidence*100), (x1 + 10, y1 + 35), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
+                cv2.putText(elden.frame, f"X: {int(detection.spatialCoordinates.x)} mm", (x1 + 10, y1 + 50), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
+                cv2.putText(elden.frame, f"Y: {int(detection.spatialCoordinates.y)} mm", (x1 + 10, y1 + 65), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
+                cv2.putText(elden.frame, f"Z: {int(detection.spatialCoordinates.z)} mm", (x1 + 10, y1 + 80), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
             while True:
                 pv.prepareFrames()
                 inNn = elden.nm.outputQueue.tryGet()
