@@ -13,6 +13,14 @@ class elden:
 
 
     pipeline = dai.Pipeline()
+
+    # Define sources and outputs
+    camRgb = pipeline.create(dai.node.ColorCamera)
+    spatialDetectionNetwork = pipeline.create(dai.node.MobileNetSpatialDetectionNetwork)
+    monoLeft = pipeline.create(dai.node.MonoCamera)
+    monoRight = pipeline.create(dai.node.MonoCamera)
+    stereo = pipeline.create(dai.node.StereoDepth)
+    
     xoutRgb = pipeline.create(dai.node.XLinkOut)
     xoutNN = pipeline.create(dai.node.XLinkOut)
     xoutBoundingBoxDepthMapping = pipeline.create(dai.node.XLinkOut)
