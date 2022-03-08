@@ -15,6 +15,9 @@ class elden:
 
     pm.addNn(nn)
 
+    labelMap = ["background", "aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow",
+                "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"]
+
     def ring():
         with dai.Device(elden.pm.pipeline) as device:
             pv = PreviewManager(display=[Previews.color.name])
