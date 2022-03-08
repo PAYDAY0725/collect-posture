@@ -12,6 +12,18 @@ class elden:
              "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"]
 
 
+    pipeline = dai.Pipeline()
+    xoutRgb = pipeline.create(dai.node.XLinkOut)
+    xoutNN = pipeline.create(dai.node.XLinkOut)
+    xoutBoundingBoxDepthMapping = pipeline.create(dai.node.XLinkOut)
+    xoutDepth = pipeline.create(dai.node.XLinkOut)
+
+    xoutRgb.setStreamName("rgb")
+    xoutNN.setStreamName("detections")
+    xoutBoundingBoxDepthMapping.setStreamName("boundingBoxDepthMapping")
+    xoutDepth.setStreamName("depth")
+
+
     bm = BlobManager(zooName="mobilenet-ssd")
     nm = NNetManager(inputSize=(300, 300), nnFamily="mobilenet")
     nn = nm.createNN(pipeline=pm.pipeline, nodes=pm.nodes, source=Previews.color.name,
