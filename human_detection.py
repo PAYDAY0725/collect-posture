@@ -43,21 +43,23 @@ class elden:
     pm.addNn(nn)
     
     def ring():
-        previewQueue = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
-        inPreview = previewQueue.get()
-        frame = inPreview.getCvFrame()
-
-        detectionNNQueue = device.getOutputQueue(name="detections", maxSize=4, blocking=False)
-        inDet = detectionNNQueue.get()
-        detections = inDet.detections
-
-        height = frame.shape[0]
-        width  = frame.shape[1]
+        
         with dai.Device(elden.pm.pipeline) as device:
             pv = PreviewManager(display=[Previews.color.name])
             pv.createQueues(device)
             elden.nm.createQueues(device)
             nnData = []
+
+            previewQueue = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
+            inPreview = previewQueue.get()
+            frame = inPreview.getCvFrame()
+
+            detectionNNQueue = device.getOutputQueue(name="detections", maxSize=4, blocking=False)
+            inDet = detectionNNQueue.get()
+            detections = inDet.detections
+
+            height = frame.shape[0]
+            width  = frame.shape[1]
 
            
 
