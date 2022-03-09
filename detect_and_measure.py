@@ -5,6 +5,8 @@ import depthai as dai
 import numpy as np
 import time
 
+# for firebase
+import firebase_real
 
 # 書き換えて
 ##############
@@ -165,6 +167,7 @@ with dai.Device(pipeline) as device:
             cv2.circle(frame, (x1_2, y1_2), 10, (0, 0, 200), thickness=3) #center
             cv2.putText(frame, f"X:{int(x1_2)}, Y:{int(y1_2)}", (x1_2 + 10, y1_2 + 50), cv2.FONT_HERSHEY_TRIPLEX, 0.5, (0, 0, 255))
 
+            firebase_real.fire_rd.fire_add(int(detection.spatialCoordinates.z))
 
 
         #cv2.putText(frame, "NN fps: {:.2f}".format(fps), (2, frame.shape[0] - 4), cv2.FONT_HERSHEY_TRIPLEX, 0.4, (255,255,255))
@@ -173,4 +176,3 @@ with dai.Device(pipeline) as device:
 
         if cv2.waitKey(1) == ord('q'):
             break
-

@@ -5,15 +5,14 @@ from firebase_admin import db
 class fire_rd:
 
 
-    cred = credentials.Certificate('-_-')
+    cred = credentials.Certificate('hacku2021.json')
 
     firebase_admin.initialize_app(cred, {
-        'databaseURL': '-_-', 
+        'databaseURL': '-_-',
     })
 
     users_ref = db.reference()
     def fire_add(z_data):
         fire_rd.users_ref.set({
-            'z': z_data   
+            'z': z_data
             })
-            
