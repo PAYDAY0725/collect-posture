@@ -5,6 +5,9 @@ import depthai as dai
 import numpy as np
 import time
 
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
 
 # 書き換えて
 ##############
@@ -173,3 +176,23 @@ with dai.Device(pipeline) as device:
 
         if cv2.waitKey(1) == ord('q'):
             break
+
+
+class fire_rd:
+
+
+    cred = credentials.Certificate('-_-')
+
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': '-_-',
+        
+        
+    })
+
+    z=int(detection.spatialCoordinates.z)
+    users_ref = db.reference()
+    def fire_add():
+        fire_rd.users_ref.set({
+            'z': fire_rd.z   
+            })
+            
