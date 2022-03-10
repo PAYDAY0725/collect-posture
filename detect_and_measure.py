@@ -99,6 +99,7 @@ with dai.Device(pipeline) as device:
     counter = 0
     fps = 0
     init_position = 0
+    p_init = False
 
     while True:
         inPreview = previewQueue.get()
@@ -173,10 +174,12 @@ with dai.Device(pipeline) as device:
         if key == ord('p'):
             init_position = int(detection.spatialCoordinates.z)
             print('====== saved init position ======')
+            p_init = True
 
         # calc target's pose
-        pose = int(detection.spatialCoordinates.z) - init_position
-        firebase_real.fire_rd.fire_add(pose)
+        if p_init == True:
+            pose = int(detection.spatialCoordinates.z) - init_position
+            firebase_real.fire_rd.fire_add(pose)
 
 
         #cv2.putText(frame, "NN fps: {:.2f}".format(fps), (2, frame.shape[0] - 4), cv2.FONT_HERSHEY_TRIPLEX, 0.4, (255,255,255))
