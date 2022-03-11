@@ -36,12 +36,14 @@ void setup(){
   Serial.begin(115200);
   Serial.println("==== setup ====");
 
+
   // allow allocation of all timers
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
   Serial.println("==== allow allocation ====");
+
 
   // M5 init
   M5.begin(true, false, true);
@@ -58,7 +60,6 @@ void setup(){
   Serial.print("ip: ");
   Serial.println(WiFi.localIP());
 
-
   // firebase init
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
   Firebase.reconnectWiFi(true);
@@ -73,6 +74,34 @@ void setup(){
   Serial.println("==== servo init ====");
 }
 
+
 void loop(){
 
+  // get pos data
+  Firebase.getFloat(fbd, "/z/");
+  pos_fire = fbd.to<float>();
+
+  // calc pose
+  if(pos_fire<=0 && pos_fire>=-200)
+  {
+    pos = (int)pos_fire * -0.3;
+  }
+  else if(pos_fire>0){
+    pos = 0;
+  }
+  else if(pos_fire<-200){
+    pos = 60;
+  }
+
+
+  // move neck
+  servo.write(pos);
+  delay(10);
+
+
+  // for debug
+  Serial.print("pos_fire: ");
+  Serial.println(pos_fire);
+  Serial.print("pos: ");
+  Serial.println(pos);
 }
