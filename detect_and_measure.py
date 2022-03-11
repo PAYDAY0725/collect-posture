@@ -8,11 +8,7 @@ import time
 # for firebase
 import firebase_real
 
-# 書き換えて
-##############
-#  TODO:
-#    - MobilenetSSDを読み込めるように(パスなしで)
-##############
+
 nnBlobPath = str((Path(__file__).parent / Path('mobilenet-ssd_openvino_2021.2_6shave.blob')).resolve().absolute())
 if len(sys.argv) > 1:
     nnBlobPath = sys.argv[1]
