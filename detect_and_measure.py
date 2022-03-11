@@ -6,11 +6,9 @@ import numpy as np
 import time
 
 
-# 書き換えて
-##############
-#  TODO:
-#    - MobilenetSSDを読み込めるように(パスなしで)
-##############
+# for firebase
+import firebase_real
+
 nnBlobPath = str((Path(__file__).parent / Path('mobilenet-ssd_openvino_2021.2_6shave.blob')).resolve().absolute())
 if len(sys.argv) > 1:
     nnBlobPath = sys.argv[1]
@@ -96,6 +94,9 @@ with dai.Device(pipeline) as device:
     startTime = time.monotonic()
     counter = 0
     fps = 0
+    init_position = 0
+    p_init = False
+
 
     while True:
         inPreview = previewQueue.get()
@@ -164,6 +165,19 @@ with dai.Device(pipeline) as device:
             #cv2.rectangle(frame, (x1_2, y1_2), (x2_2, y2_2), (255, 255, 255), cv2.FONT_HERSHEY_SIMPLEX)
             cv2.circle(frame, (x1_2, y1_2), 10, (0, 0, 200), thickness=3) #center
             cv2.putText(frame, f"X:{int(x1_2)}, Y:{int(y1_2)}", (x1_2 + 10, y1_2 + 50), cv2.FONT_HERSHEY_TRIPLEX, 0.5, (0, 0, 255))
+
+
+        # save initial position
+        key = cv2.waitKey(10)
+        if key == ord('p'):
+            init_position = int(detection.spatialCoordinates.z)
+            print('====== saved init position ======')
+            p_init = True
+
+        # calc target's pose
+        if p_init == True:
+            pose = int(detection.spatialCoordinates.z) - init_position
+            firebase_real.fire_rd.fire_add(pose)
 
 
 
