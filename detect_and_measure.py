@@ -5,9 +5,9 @@ import depthai as dai
 import numpy as np
 import time
 
+
 # for firebase
 import firebase_real
-
 
 nnBlobPath = str((Path(__file__).parent / Path('mobilenet-ssd_openvino_2021.2_6shave.blob')).resolve().absolute())
 if len(sys.argv) > 1:
@@ -97,6 +97,7 @@ with dai.Device(pipeline) as device:
     init_position = 0
     p_init = False
 
+
     while True:
         inPreview = previewQueue.get()
         inDet = detectionNNQueue.get()
@@ -165,6 +166,7 @@ with dai.Device(pipeline) as device:
             cv2.circle(frame, (x1_2, y1_2), 10, (0, 0, 200), thickness=3) #center
             cv2.putText(frame, f"X:{int(x1_2)}, Y:{int(y1_2)}", (x1_2 + 10, y1_2 + 50), cv2.FONT_HERSHEY_TRIPLEX, 0.5, (0, 0, 255))
 
+
         # save initial position
         key = cv2.waitKey(10)
         if key == ord('p'):
@@ -176,6 +178,7 @@ with dai.Device(pipeline) as device:
         if p_init == True:
             pose = int(detection.spatialCoordinates.z) - init_position
             firebase_real.fire_rd.fire_add(pose)
+
 
 
         #cv2.putText(frame, "NN fps: {:.2f}".format(fps), (2, frame.shape[0] - 4), cv2.FONT_HERSHEY_TRIPLEX, 0.4, (255,255,255))
