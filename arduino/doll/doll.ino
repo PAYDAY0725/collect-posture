@@ -32,7 +32,45 @@ float pos_fire = 0;
 
 
 void setup(){
+  // for debug
+  Serial.begin(115200);
+  Serial.println("==== setup ====");
 
+  // allow allocation of all timers
+  ESP32PWM::allocateTimer(0);
+  ESP32PWM::allocateTimer(1);
+  ESP32PWM::allocateTimer(2);
+  ESP32PWM::allocateTimer(3);
+  Serial.println("==== allow allocation ====");
+
+  // M5 init
+  M5.begin(true, false, true);
+  delay(50);
+  Serial.println("==== M5 init ====");
+
+  // wifi init
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    M5.dis.drawpix(0, 0xff0000);        // Green(not-ready)
+  }
+  Serial.println("==== wifi init ====");
+  Serial.print("ip: ");
+  Serial.println(WiFi.localIP());
+
+
+  // firebase init
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+  Firebase.reconnectWiFi(true);
+  Serial.println("==== firebase init ====");
+
+  // servo init
+  servo.setPeriodHertz(50);
+  servo.attach(servoPin, MIN_PLS, MAX_PLS);
+  M5.dis.drawpix(0, 0x0000f0);        // BLUE(ready)
+  servo.write(0);
+  delay(1);
+  Serial.println("==== servo init ====");
 }
 
 void loop(){
